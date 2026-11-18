@@ -1,1 +1,0 @@
-{"chromeFlags":"--headless=new,--no-sandbox,--disable-dev-shm-usage,--proxy-server=http://127.0.0.1:18081,--proxy-bypass-list=127.0.0.1,localhost,--ignore-certificate-errors --headless=new --headless=new --headless=new"}
