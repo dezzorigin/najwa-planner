@@ -1,22 +1,38 @@
 <!DOCTYPE html>
-<html lang="en" class="theme-dark">
+<html lang="id" class="theme-dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Najwa Planner OS</title>
 
     <link rel="manifest" href="manifest.json">
+
+<script>
+  // PWA: daftarkan service worker agar aplikasi bisa dibuka offline.
+  // (Sebelumnya sw.js ada tapi TIDAK PERNAH didaftarkan, jadi mode offline tidak jalan.)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        console.log('Service Worker terdaftar:', reg.scope);
+      }).catch(err => {
+        console.log('Service Worker gagal:', err);
+      });
+    });
+  }
+</script>
     <meta name="theme-color" content="#0B0F19" id="theme-color-meta">
+    <meta name="description" content="Najwa Planner OS — agenda, rutinitas, inventaris, dan logbook dalam satu PWA offline-first. Tanpa akun, tanpa server, data tinggal di perangkat.">
+    <link rel="icon" type="image/png" href="./icon-192.png">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     <link rel="icon" type="image/svg+xml" href="./logo.svg">
-    <link rel="apple-touch-icon" href="./logo.svg">
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+    <script src="./tailwind.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script defer src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -117,7 +133,7 @@
             box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
         }
-        
+
         html.theme-dark .bento-card {
             box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255,255,255,0.05);
@@ -187,7 +203,7 @@
     </div>
 
     <!-- Header -->
-    <header class="sticky top-0 z-40 pt-8 pb-6 px-6 glass-header">
+    <header id="appHeader" class="sticky top-0 z-40 pt-8 pb-6 px-6 glass-header hidden">
         <div class="flex justify-between items-center max-w-4xl mx-auto">
             <div>
                 <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand to-purple-500">Najwa Planner</h1>
@@ -200,9 +216,118 @@
     </header>
 
     <main id="mainContainer" class="max-w-4xl mx-auto">
-        
+        <!-- ================= LANDING ================= -->
+        <section id="view-landing" class="animate-fade-in">
+            <!-- Navbar -->
+            <nav aria-label="Navigasi utama" class="sticky top-0 z-40 bg-bgPrime/80 backdrop-blur-xl border-b border-[var(--color-border)]">
+                <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <a href="#atas" class="flex items-center gap-2.5">
+                        <img src="./logo.svg" alt="Logo Najwa Planner" class="h-9 w-9 rounded-xl">
+                        <span class="font-extrabold text-lg tracking-tight text-textMain">Najwa Planner</span>
+                    </a>
+                    <div class="hidden sm:flex items-center gap-7 text-sm font-bold text-textMuted">
+                        <a href="#fitur" class="hover:text-brand transition-colors">Fitur</a>
+                        <a href="#cara-kerja" class="hover:text-brand transition-colors">Cara Kerja</a>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="#fitur" class="sm:hidden text-sm font-bold text-brand">Fitur</a>
+                        <a href="https://github.com/dezzorigin/najwa-planner" target="_blank" rel="noopener" aria-label="Lihat di GitHub" title="Lihat di GitHub" class="text-textMuted hover:text-textMain transition-colors">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Hero -->
+            <div id="atas" class="px-6 pt-12 pb-10 grid gap-10 lg:grid-cols-2 lg:items-center">
+                <div>
+                    <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase bg-brand/10 text-brand px-3 py-1.5 rounded-full">PWA &bull; Offline-first &bull; Tanpa akun</span>
+                    <h1 class="mt-5 text-4xl sm:text-5xl font-black tracking-tight leading-[1.05] text-textMain">Rencana harimu,<br>dalam <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand to-purple-500">satu tempat.</span></h1>
+                    <p class="mt-5 text-base sm:text-lg text-textMuted font-medium leading-relaxed">Najwa Planner OS — agenda, rutinitas, inventaris, dan logbook dalam satu aplikasi yang bisa di-install di HP dan tetap dibuka saat offline. Tanpa akun, tanpa server, datamu tinggal di perangkatmu.</p>
+                    <div class="mt-8 flex flex-wrap items-center gap-4">
+                        <button type="button" onclick="enterApp()" class="px-7 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Buka Planner &rarr;</button>
+                        <a href="#fitur" class="px-7 py-4 rounded-2xl font-bold text-textMain bg-card border border-[var(--color-border)] hover:border-brand/40 transition-all">Lihat Fitur</a>
+                    </div>
+                    <p class="mt-4 text-xs font-semibold text-textMuted">Gratis &bull; Tanpa akun &bull; Data tersimpan lokal di perangkat</p>
+                </div>
+                <!-- Pratinjau aplikasi -->
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-tr from-brand/25 to-purple-500/25 blur-3xl rounded-full"></div>
+                    <div class="relative bg-card border border-[var(--color-border)] rounded-[2rem] shadow-2xl p-5 sm:p-6 max-w-sm mx-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <p class="font-extrabold text-textMain">Today&rsquo;s Agenda</p>
+                            <span class="text-[10px] font-bold tracking-widest uppercase bg-brand/10 text-brand px-2.5 py-1 rounded-full">Pratinjau</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 bg-bgPrime rounded-2xl p-3.5">
+                                <span class="text-xs font-black text-brand bg-brand/10 rounded-xl px-2.5 py-1.5">09:00</span>
+                                <div><p class="text-sm font-bold text-textMain leading-tight">Belajar PTK</p><p class="text-xs text-textMuted font-medium">Perpustakaan kampus</p></div>
+                            </div>
+                            <div class="flex items-center gap-3 bg-bgPrime rounded-2xl p-3.5">
+                                <span class="text-xs font-black text-brand bg-brand/10 rounded-xl px-2.5 py-1.5">13:00</span>
+                                <div><p class="text-sm font-bold text-textMain leading-tight">Les Bahasa Inggris</p><p class="text-xs text-textMuted font-medium">Online &bull; 60 menit</p></div>
+                            </div>
+                            <div class="flex items-center gap-3 bg-brand/5 border border-brand/20 rounded-2xl p-3.5">
+                                <span class="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-purple-500 text-white flex items-center justify-center text-xs shrink-0"><i class="fa-solid fa-check"></i></span>
+                                <div><p class="text-sm font-bold text-brand line-through opacity-70">Baca 10 halaman</p><p class="text-xs text-textMuted font-medium">Rutinitas &bull; selesai + bukti foto</p></div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <p class="text-xs font-bold text-textMuted tracking-wide uppercase">Aktivitas 30 hari</p>
+                            <div class="flex gap-1">
+                                <span class="w-3 h-3 rounded bg-brand/20"></span><span class="w-3 h-3 rounded bg-brand/40"></span><span class="w-3 h-3 rounded bg-brand/60"></span><span class="w-3 h-3 rounded bg-brand"></span><span class="w-3 h-3 rounded bg-brand/30"></span><span class="w-3 h-3 rounded bg-brand/80"></span><span class="w-3 h-3 rounded bg-brand"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fitur -->
+            <div id="fitur" class="px-6 py-12">
+                <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-textMain">Semua yang perlu, tanpa yang tidak.</h2>
+                <p class="mt-2 text-textMuted font-medium">Delapan alat dalam satu halaman — semuanya jalan offline setelah kunjungan pertama.</p>
+                <div class="mt-8 grid sm:grid-cols-2 gap-4">
+                    <div class="bento-card"><i class="fa-solid fa-calendar-day text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Agenda Harian</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Semua event hari ini dalam satu kartu, lengkap dengan jam dan lokasi.</p></div>
+                    <div class="bento-card"><i class="fa-solid fa-list-check text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Rutinitas &amp; Proof of Work</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Centang rutinitas harian dan lampirkan bukti foto + catatan penyelesaian.</p></div>
+                    <div class="bento-card"><i class="fa-solid fa-boxes-stacked text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Inventory</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Stok barang tercatat rapi; kurangi satu ketukan lewat tombol Consume.</p></div>
+                    <div class="bento-card"><i class="fa-solid fa-book-open text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Logbook &amp; Heatmap</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Jejak rutinitas yang selesai, plus peta aktivitas 30 hari terakhir.</p></div>
+                    <div class="bento-card"><i class="fa-solid fa-calendar-days text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Kalender</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Lihat sebulan penuh, ketuk tanggal untuk mengisi agendanya.</p></div>
+                    <div class="bento-card"><i class="fa-solid fa-share-nodes text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Sinkronisasi P2P</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Kirim seluruh data ke perangkat lain via WebRTC — langsung antar perangkat, tanpa server sendiri.</p></div>
+                    <div class="bento-card"><i class="fa-solid fa-file-pdf text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Laporan PDF</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Ekspor riwayat, agenda, atau inventaris jadi PDF siap cetak.</p></div>
+                    <div class="bento-card"><i class="fa-solid fa-lock text-brand text-xl"></i><h3 class="mt-3 font-extrabold text-textMain">Vault PIN</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Catatan dan event sensitif dienkripsi AES-GCM dengan PIN 4 digit.</p></div>
+                </div>
+            </div>
+
+            <!-- Cara kerja -->
+            <div id="cara-kerja" class="px-6 py-12">
+                <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-textMain">Cara kerja</h2>
+                <p class="mt-2 text-textMuted font-medium">Tiga langkah, lalu biarkan kebiasaanmu tercatat sendiri.</p>
+                <div class="mt-8 grid sm:grid-cols-3 gap-4">
+                    <div class="bento-card"><span class="inline-flex w-10 h-10 rounded-2xl bg-brand/10 text-brand font-black items-center justify-center">1</span><h3 class="mt-3 font-extrabold text-textMain">Tambah rutinitas &amp; event</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Isi sekali; rutinitas berulang tiap hari, event terjadwal di kalender.</p></div>
+                    <div class="bento-card"><span class="inline-flex w-10 h-10 rounded-2xl bg-brand/10 text-brand font-black items-center justify-center">2</span><h3 class="mt-3 font-extrabold text-textMain">Selesaikan dengan bukti</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Ketuk centang, tulis catatan, lampirkan foto — tersimpan sebagai Proof of Work.</p></div>
+                    <div class="bento-card"><span class="inline-flex w-10 h-10 rounded-2xl bg-brand/10 text-brand font-black items-center justify-center">3</span><h3 class="mt-3 font-extrabold text-textMain">Pantau progresmu</h3><p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Logbook, heatmap, dan laporan PDF menunjukkan konsistensimu.</p></div>
+                </div>
+            </div>
+
+            <!-- Privasi + CTA + footer -->
+            <div class="px-6 pb-16">
+                <div class="bento-card flex flex-col sm:flex-row sm:items-center gap-5 justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-textMain text-lg">Datamu tetap milikmu.</h3>
+                        <p class="mt-1 text-sm text-textMuted font-medium leading-relaxed">Tidak ada akun, tidak ada pelacakan. Agenda, rutinitas, dan inventaris tersimpan lokal (IndexedDB) di perangkatmu. Satu-satunya koneksi keluar adalah sinkronisasi P2P yang kamu nyalakan sendiri.</p>
+                    </div>
+                    <button type="button" onclick="enterApp()" class="shrink-0 px-6 py-3.5 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Buka Planner &rarr;</button>
+                </div>
+                <footer class="mt-10 pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-semibold text-textMuted">
+                    <p>Najwa Planner OS v1.1.0 &mdash; dibuat oleh Nabil Aulia Dika (dezzorigin)</p>
+                    <p><a href="https://github.com/dezzorigin/najwa-planner" target="_blank" rel="noopener" class="hover:text-brand transition-colors">GitHub</a> &bull; Lisensi MIT</p>
+                </footer>
+            </div>
+        </section>
+
+
         <!-- ================= VIEW 1: HUD (DASHBOARD) ================= -->
-        <section id="view-hud" class="p-4 sm:p-6 space-y-8 animate-fade-in pb-20">
+        <section id="view-hud" class="hidden p-4 sm:p-6 space-y-8 animate-fade-in pb-20">
             <!-- Today's Agenda (replaces Welcome Header) -->
             <div class="bento-card relative overflow-hidden group">
                 <div class="flex justify-between items-center mb-6 relative z-10">
@@ -212,11 +337,11 @@
                         </h2>
                         <p class="text-sm font-medium text-textMuted mt-1" id="hud-agenda-date"></p>
                     </div>
-                    <button onclick="switchView('calendar')" class="text-xs font-bold bg-brand/10 text-brand px-3 py-2 rounded-xl hover:bg-brand/20 transition-colors shadow-sm">
+                    <button type="button" onclick="switchView('calendar')" class="text-xs font-bold bg-brand/10 text-brand px-3 py-2 rounded-xl hover:bg-brand/20 transition-colors shadow-sm">
                         View All
                     </button>
                 </div>
-                
+
                 <div id="hud-agenda-container" class="space-y-3 relative z-10 max-h-60 overflow-y-auto pr-2">
                     <!-- Today's events injected by JS -->
                 </div>
@@ -227,8 +352,8 @@
                 <!-- Timeline -->
                 <div class="bento-card flex flex-col h-full">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-lg font-bold text-textMain flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-brand animate-pulse shadow-[0_0_8px_var(--color-brand)]"></div> Daily Routines</h2>
-                        <button onclick="openRoutineModal()" class="text-sm text-brand font-bold bg-brand/10 hover:bg-brand/20 transition px-3 py-1.5 rounded-xl"><i class="fa-solid fa-plus mr-1"></i>Add</button>
+                        <h2 class="text-lg font-bold text-textMain flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-brand animate-pulse shadow-[0_0_8px_var(--color-brand)]"></span> Daily Routines</h2>
+                        <button type="button" onclick="openRoutineModal()" class="text-sm text-brand font-bold bg-brand/10 hover:bg-brand/20 transition px-3 py-1.5 rounded-xl"><i class="fa-solid fa-plus mr-1"></i>Add</button>
                     </div>
                     <div id="routineContainer" class="space-y-4 flex-1">
                         <!-- Routines injected by JS -->
@@ -239,12 +364,11 @@
                 <div class="bento-card flex flex-col h-full overflow-hidden">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-lg font-bold text-textMain flex items-center gap-2"><i class="fa-solid fa-box-open text-brand"></i> Inventory</h2>
-                        <button onclick="openInventoryModal()" class="text-sm text-brand font-bold bg-brand/10 hover:bg-brand/20 transition px-3 py-1.5 rounded-xl"><i class="fa-solid fa-plus mr-1"></i>Add</button>
+                        <button type="button" onclick="openInventoryModal()" class="text-sm text-brand font-bold bg-brand/10 hover:bg-brand/20 transition px-3 py-1.5 rounded-xl"><i class="fa-solid fa-plus mr-1"></i>Add</button>
                     </div>
                     <div id="inventoryContainer" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory -mx-2 px-2 scroll-smooth">
                         <!-- Cards injected by JS -->
                     </div>
-                </div>
                 </div>
             </div>
         </section>
@@ -258,14 +382,14 @@
                 </div>
                 <input type="date" id="logbook-date" onchange="renderLogbook()" class="bg-card/60 backdrop-blur-md text-textMain border border-[var(--color-border)] rounded-2xl px-5 py-3 text-sm font-semibold focus:outline-none focus:border-brand shadow-sm w-full sm:w-auto transition-colors">
             </div>
-            
+
             <div class="bento-card relative overflow-hidden">
                 <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-purple-500/10 blur-[40px] rounded-full"></div>
-                <button onclick="toggleHeatmap()" class="w-full flex justify-between items-center relative z-10 text-left focus:outline-none group">
-                    <h3 class="text-base font-bold text-textMain tracking-wide uppercase group-hover:text-brand transition-colors"><i class="fa-solid fa-fire text-brand mr-2"></i> Activity Heatmap</h3>
-                    <div class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted group-hover:bg-brand group-hover:text-white group-hover:border-brand transition-all">
+                <button type="button" onclick="toggleHeatmap()" class="w-full flex justify-between items-center relative z-10 text-left focus:outline-none group">
+                    <span class="text-base font-bold text-textMain tracking-wide uppercase group-hover:text-brand transition-colors"><i class="fa-solid fa-fire text-brand mr-2"></i> Activity Heatmap</span>
+                    <span class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted group-hover:bg-brand group-hover:text-white group-hover:border-brand transition-all">
                         <i id="heatmap-icon" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
-                    </div>
+                    </span>
                 </button>
                 <div id="heatmap-wrapper" class="hidden mt-6 transition-all duration-300">
                     <div id="heatmap-grid" class="flex flex-wrap gap-2 relative z-10">
@@ -281,16 +405,16 @@
 
         <!-- ================= VIEW 3: CALENDAR & AGENDA ================= -->
         <section id="view-calendar" class="hidden p-6 space-y-8 animate-fade-in pb-20">
-            
+
             <div class="bento-card">
                 <div class="flex justify-between items-center mb-8">
                     <h2 id="calendar-month-label" class="text-2xl font-black text-textMain tracking-tight">Month Year</h2>
                     <div class="flex gap-3">
-                        <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-xl bg-bgPrime border border-[var(--color-border)] text-textMain flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button onclick="changeMonth(1)" class="w-10 h-10 rounded-xl bg-bgPrime border border-[var(--color-border)] text-textMain flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button type="button" aria-label="Bulan sebelumnya" onclick="changeMonth(-1)" class="w-10 h-10 rounded-xl bg-bgPrime border border-[var(--color-border)] text-textMain flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button type="button" aria-label="Bulan berikutnya" onclick="changeMonth(1)" class="w-10 h-10 rounded-xl bg-bgPrime border border-[var(--color-border)] text-textMain flex items-center justify-center hover:bg-brand hover:text-white hover:border-brand transition-all shadow-sm"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
                 </div>
-                
+
                 <div class="grid grid-cols-7 gap-2 mb-4 text-center">
                     <div class="text-xs font-bold text-textMuted uppercase tracking-wider">Su</div>
                     <div class="text-xs font-bold text-textMuted uppercase tracking-wider">Mo</div>
@@ -308,7 +432,7 @@
             <div class="mt-8">
                 <div class="flex justify-between items-center mb-6">
                     <h3 id="agenda-date-label" class="font-black text-textMain text-2xl tracking-tight">Agenda</h3>
-                    <button onclick="openEventModal()" class="text-sm text-brand font-bold bg-brand/10 hover:bg-brand/20 transition px-4 py-2 rounded-xl shadow-sm"><i class="fa-solid fa-plus mr-2"></i>Add Event</button>
+                    <button type="button" onclick="openEventModal()" class="text-sm text-brand font-bold bg-brand/10 hover:bg-brand/20 transition px-4 py-2 rounded-xl shadow-sm"><i class="fa-solid fa-plus mr-2"></i>Add Event</button>
                 </div>
                 <div id="agenda-list" class="space-y-4">
                     <!-- Events injected by JS -->
@@ -319,14 +443,15 @@
         <!-- ================= VIEW 4: SETTINGS ================= -->
         <section id="view-settings" class="hidden p-6 space-y-8 animate-fade-in pb-20">
             <h2 class="text-3xl font-black text-textMain mb-4 tracking-tight"><i class="fa-solid fa-gear mr-3 text-brand"></i>Settings</h2>
-            
+
             <div class="bento-card">
                 <h3 class="text-sm font-bold text-brand mb-5 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-palette"></i> Appearance</h3>
                 <div class="grid grid-cols-3 gap-4">
-                    <button onclick="setTheme('theme-light')" class="py-4 rounded-2xl bg-[#f8fafc] text-slate-800 font-bold text-sm border border-slate-200 hover:shadow-lg transition-all focus:ring-4 focus:ring-slate-300">Light</button>
-                    <button onclick="setTheme('theme-dark')" class="py-4 rounded-2xl bg-[#0B0F19] text-white font-bold text-sm border border-slate-800 hover:shadow-lg transition-all focus:ring-4 focus:ring-slate-700">Dark</button>
-                    <button onclick="setTheme('theme-pink')" class="py-4 rounded-2xl bg-[#fff1f2] text-pink-700 font-bold text-sm border border-pink-200 hover:shadow-lg transition-all focus:ring-4 focus:ring-pink-300">Pink</button>
+                    <button type="button" onclick="setTheme('theme-light')" class="py-4 rounded-2xl bg-[#f8fafc] text-slate-800 font-bold text-sm border border-slate-200 hover:shadow-lg transition-all focus:ring-4 focus:ring-slate-300">Light</button>
+                    <button type="button" onclick="setTheme('theme-dark')" class="py-4 rounded-2xl bg-[#0B0F19] text-white font-bold text-sm border border-slate-800 hover:shadow-lg transition-all focus:ring-4 focus:ring-slate-700">Dark</button>
+                    <button type="button" onclick="setTheme('theme-pink')" class="py-4 rounded-2xl bg-[#fff1f2] text-pink-700 font-bold text-sm border border-pink-200 hover:shadow-lg transition-all focus:ring-4 focus:ring-pink-300">Pink</button>
                 </div>
+                <button type="button" onclick="showLanding()" class="mt-4 w-full py-3 rounded-2xl font-bold text-sm text-brand bg-brand/10 hover:bg-brand/20 transition-colors border border-brand/20">Lihat Halaman Depan</button>
             </div>
 
             <div class="bento-card">
@@ -337,14 +462,14 @@
                         <label class="block text-[10px] font-bold text-textMuted uppercase mb-2 tracking-widest">Your Device ID</label>
                         <div class="flex gap-2">
                             <input id="my-peer-id" type="text" readonly class="w-full bg-bgPrime border border-[var(--color-border)] rounded-xl p-3 text-textMain text-sm font-medium focus:outline-none shadow-inner opacity-70" placeholder="Not generated">
-                            <button onclick="initPeer()" class="px-4 bg-brand/10 text-brand rounded-xl hover:bg-brand/20 font-bold transition-colors border border-brand/20"><i class="fa-solid fa-power-off"></i></button>
+                            <button type="button" aria-label="Aktifkan sinkronisasi" onclick="initPeer()" class="px-4 bg-brand/10 text-brand rounded-xl hover:bg-brand/20 font-bold transition-colors border border-brand/20"><i class="fa-solid fa-power-off"></i></button>
                         </div>
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-textMuted uppercase mb-2 tracking-widest">Connect to ID</label>
                         <div class="flex gap-2">
                             <input id="target-peer-id" type="text" placeholder="Enter target ID" class="w-full bg-bgPrime border border-[var(--color-border)] rounded-xl p-3 text-textMain text-sm font-medium focus:border-brand outline-none transition-all shadow-inner">
-                            <button onclick="connectAndSync()" class="px-4 bg-brand text-white shadow-[0_4px_12px_var(--color-brand-glow)] rounded-xl hover:opacity-90 font-bold transition-all"><i class="fa-solid fa-link"></i></button>
+                            <button type="button" aria-label="Hubungkan dan sinkronkan" onclick="connectAndSync()" class="px-4 bg-brand text-white shadow-[0_4px_12px_var(--color-brand-glow)] rounded-xl hover:opacity-90 font-bold transition-all"><i class="fa-solid fa-link"></i></button>
                         </div>
                     </div>
                 </div>
@@ -352,12 +477,12 @@
             </div>
 
             <div class="bento-card">
-                <h3 class="text-sm font-bold text-brand mb-5 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-database"></i> Reports & Data</h3>
-                <button onclick="openPdfModal()" class="w-full py-4 bg-gradient-to-r from-brand to-purple-600 text-white rounded-2xl font-bold shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all flex justify-center items-center text-base"><i class="fa-solid fa-file-pdf mr-3 text-lg"></i>Generate PDF Report</button>
-                
+                <h3 class="text-sm font-bold text-brand mb-5 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-database"></i> Reports &amp; Data</h3>
+                <button type="button" onclick="openPdfModal()" class="w-full py-4 bg-gradient-to-r from-brand to-purple-600 text-white rounded-2xl font-bold shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all flex justify-center items-center text-base"><i class="fa-solid fa-file-pdf mr-3 text-lg"></i>Generate PDF Report</button>
+
                 <div class="h-px w-full bg-[var(--color-border)] my-6"></div>
-                
-                <button onclick="resetData()" class="w-full py-4 bg-red-500/10 text-red-500 border border-red-500/20 rounded-2xl font-bold hover:bg-red-500/20 hover:border-red-500/30 transition-all flex justify-center items-center text-base"><i class="fa-solid fa-triangle-exclamation mr-3 text-lg"></i>Wipe All Data (Reset)</button>
+
+                <button type="button" onclick="resetData()" class="w-full py-4 bg-red-500/10 text-red-500 border border-red-500/20 rounded-2xl font-bold hover:bg-red-500/20 hover:border-red-500/30 transition-all flex justify-center items-center text-base"><i class="fa-solid fa-triangle-exclamation mr-3 text-lg"></i>Wipe All Data (Reset)</button>
             </div>
 
             <div class="pt-10 pb-6 text-center opacity-60 hover:opacity-100 transition-opacity">
@@ -369,21 +494,21 @@
     </main>
 
     <!-- ================= BOTTOM NAVIGATION ================= -->
-    <nav class="fixed bottom-0 w-full max-w-md mx-auto inset-x-0 glass-nav z-50 pb-safe rounded-t-[2.5rem] border-x border-[var(--color-border)] shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+    <nav id="bottomNav" aria-label="Navigasi aplikasi" class="fixed bottom-0 w-full max-w-md mx-auto inset-x-0 glass-nav z-50 hidden pb-safe rounded-t-[2.5rem] border-x border-[var(--color-border)] shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
         <div class="flex justify-around items-center h-20 px-4">
-            <button onclick="switchView('hud')" class="nav-btn active flex flex-col items-center justify-center w-full h-full text-brand transition-all hover:scale-110">
+            <button type="button" onclick="switchView('hud')" class="nav-btn active flex flex-col items-center justify-center w-full h-full text-brand transition-all hover:scale-110">
                 <i class="fa-solid fa-house text-2xl mb-1.5 drop-shadow-md"></i>
                 <span class="text-[11px] font-bold tracking-wide">Home</span>
             </button>
-            <button onclick="switchView('logbook')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-textMuted transition-all hover:scale-110 hover:text-textMain">
+            <button type="button" onclick="switchView('logbook')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-textMuted transition-all hover:scale-110 hover:text-textMain">
                 <i class="fa-solid fa-book-open text-2xl mb-1.5"></i>
                 <span class="text-[11px] font-bold tracking-wide">Logbook</span>
             </button>
-            <button onclick="switchView('calendar')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-textMuted transition-all hover:scale-110 hover:text-textMain">
+            <button type="button" onclick="switchView('calendar')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-textMuted transition-all hover:scale-110 hover:text-textMain">
                 <i class="fa-solid fa-calendar-days text-2xl mb-1.5"></i>
                 <span class="text-[11px] font-bold tracking-wide">Calendar</span>
             </button>
-            <button onclick="switchView('settings')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-textMuted transition-all hover:scale-110 hover:text-textMain">
+            <button type="button" onclick="switchView('settings')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-textMuted transition-all hover:scale-110 hover:text-textMain">
                 <i class="fa-solid fa-bars text-2xl mb-1.5"></i>
                 <span class="text-[11px] font-bold tracking-wide">Settings</span>
             </button>
@@ -397,7 +522,7 @@
         <div class="modal-content bg-card w-full sm:w-96 p-8 rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl transform transition-all translate-y-full sm:scale-95 duration-300 opacity-0 border border-[var(--color-border)]">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-2xl font-black text-textMain tracking-tight" id="inv-modal-title">Inventory Item</h3>
-                <button onclick="closeModal('modal-inventory')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" aria-label="Tutup" onclick="closeModal('modal-inventory')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-5">
                 <input id="inv-id" type="hidden">
@@ -416,8 +541,8 @@
                     </div>
                 </div>
                 <div class="pt-6 flex gap-3">
-                    <button id="btn-delete-inv" onclick="deleteInventory()" class="hidden py-4 px-5 rounded-2xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"><i class="fa-solid fa-trash"></i></button>
-                    <button onclick="saveInventory()" class="flex-1 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Save Item</button>
+                    <button type="button" id="btn-delete-inv" aria-label="Hapus item" onclick="deleteInventory()" class="hidden py-4 px-5 rounded-2xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" onclick="saveInventory()" class="flex-1 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Save Item</button>
                 </div>
             </div>
         </div>
@@ -428,7 +553,7 @@
         <div class="modal-content bg-card w-full sm:w-96 p-8 rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl transform transition-all translate-y-full sm:scale-95 duration-300 opacity-0 border border-[var(--color-border)]">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-2xl font-black text-textMain tracking-tight">Daily Routine</h3>
-                <button onclick="closeModal('modal-routine')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" aria-label="Tutup" onclick="closeModal('modal-routine')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-5">
                 <input id="rt-id" type="hidden">
@@ -441,8 +566,8 @@
                     <input id="rt-time" type="time" class="w-full bg-bgPrime border border-[var(--color-border)] rounded-2xl p-4 text-textMain text-sm font-medium focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all shadow-inner">
                 </div>
                 <div class="pt-6 flex gap-3">
-                    <button id="btn-delete-rt" onclick="deleteRoutine()" class="hidden py-4 px-5 rounded-2xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"><i class="fa-solid fa-trash"></i></button>
-                    <button onclick="saveRoutine()" class="flex-1 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Save Routine</button>
+                    <button type="button" id="btn-delete-rt" aria-label="Hapus rutinitas" onclick="deleteRoutine()" class="hidden py-4 px-5 rounded-2xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" onclick="saveRoutine()" class="flex-1 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Save Routine</button>
                 </div>
             </div>
         </div>
@@ -453,19 +578,19 @@
         <div class="modal-content bg-card w-full sm:w-[28rem] p-8 rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl transform transition-all translate-y-full sm:scale-95 duration-300 opacity-0 border border-[var(--color-border)] max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-black text-textMain tracking-tight">Proof of Work</h3>
-                <button onclick="closeModal('powModal')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" aria-label="Tutup" onclick="closeModal('powModal')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
+
             <div class="bg-brand/10 border border-brand/20 rounded-2xl p-4 mb-6 text-center">
                 <p id="powTaskName" class="text-brand font-extrabold text-lg tracking-wide"></p>
             </div>
-            
+
             <div class="space-y-5">
                 <div>
                     <label class="block text-xs font-bold text-textMuted uppercase mb-2 tracking-wide">Completion Note / Journal</label>
                     <textarea id="powNoteInput" rows="3" class="w-full bg-bgPrime border border-[var(--color-border)] rounded-2xl p-4 text-textMain text-sm font-medium focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all shadow-inner resize-none" placeholder="How did it go? Notes or thoughts..."></textarea>
                 </div>
-                
+
                 <!-- SECURE VAULT TOGGLE (POW) -->
                 <div class="flex items-center justify-between p-4 bg-bgPrime/60 rounded-2xl border border-[var(--color-border)]">
                     <div class="flex items-center gap-3">
@@ -477,29 +602,29 @@
                     </div>
                     <label class="toggle-switch relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="pow-is-secure" class="sr-only">
-                        <div class="w-11 h-6 bg-[var(--color-border)] rounded-full transition-colors duration-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-transform"></div>
+                        <span class="w-11 h-6 bg-[var(--color-border)] rounded-full transition-colors duration-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-transform"></span>
                     </label>
                 </div>
 
                 <label class="block w-full cursor-pointer bg-bgPrime border-2 border-dashed border-[var(--color-border)] rounded-2xl p-8 text-center hover:border-brand hover:bg-brand/5 transition-all group">
-                    <div class="w-16 h-16 bg-[var(--color-card)] rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                    <span class="w-16 h-16 bg-[var(--color-card)] rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-camera text-2xl text-textMuted group-hover:text-brand transition-colors"></i>
-                    </div>
-                    <p class="text-base font-bold text-textMain">Upload / Take Photo</p>
-                    <p class="text-xs text-textMuted mt-1 font-medium">Auto-compress &lt; 150kb</p>
+                    </span>
+                    <span class="block text-base font-bold text-textMain">Upload / Take Photo</span>
+                    <span class="block text-xs text-textMuted mt-1 font-medium">Auto-compress &lt; 150kb</span>
                     <input type="file" accept="image/*" class="hidden" id="powImageInput" onchange="handleImageCompress(event)">
                 </label>
-                
+
                 <div id="powPreviewContainer" class="hidden relative rounded-2xl overflow-hidden border border-[var(--color-border)] h-48 shadow-inner group">
-                    <img id="powPreviewImg" src="" class="w-full h-full object-cover">
+                    <img id="powPreviewImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Pratinjau foto bukti" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button onclick="clearPowImage()" class="bg-red-500 text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-red-600 hover:scale-110 transition-all shadow-lg"><i class="fa-solid fa-trash text-lg"></i></button>
+                        <button type="button" aria-label="Hapus foto" onclick="clearPowImage()" class="bg-red-500 text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-red-600 hover:scale-110 transition-all shadow-lg"><i class="fa-solid fa-trash text-lg"></i></button>
                     </div>
                 </div>
 
                 <div class="pt-4 flex gap-3">
-                    <button onclick="saveLog(false)" class="flex-1 py-4 rounded-2xl font-bold text-textMain bg-bgPrime border border-[var(--color-border)] hover:border-textMuted transition-all">Skip Photo</button>
-                    <button onclick="saveLog(true)" class="flex-[2] py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Submit & Complete</button>
+                    <button type="button" onclick="saveLog(false)" class="flex-1 py-4 rounded-2xl font-bold text-textMain bg-bgPrime border border-[var(--color-border)] hover:border-textMuted transition-all">Skip Photo</button>
+                    <button type="button" onclick="saveLog(true)" class="flex-[2] py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Submit &amp; Complete</button>
                 </div>
             </div>
         </div>
@@ -510,7 +635,7 @@
         <div class="modal-content bg-card w-full sm:w-[28rem] p-8 rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl transform transition-all translate-y-full sm:scale-95 duration-300 opacity-0 border border-[var(--color-border)] max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-2xl font-black text-textMain tracking-tight">Event Details</h3>
-                <button onclick="closeModal('modal-event')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" aria-label="Tutup" onclick="closeModal('modal-event')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-5">
                 <input id="ev-id" type="hidden">
@@ -533,9 +658,9 @@
                     <input id="ev-location" type="text" class="w-full bg-bgPrime border border-[var(--color-border)] rounded-2xl p-4 text-textMain text-sm font-medium focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all shadow-inner" placeholder="Optional Location">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-textMuted uppercase mb-2 tracking-wide">Notes & Description</label>
+                    <label class="block text-xs font-bold text-textMuted uppercase mb-2 tracking-wide">Notes &amp; Description</label>
                     <textarea id="ev-desc" rows="3" class="w-full bg-bgPrime border border-[var(--color-border)] rounded-2xl p-4 text-textMain text-sm font-medium focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all shadow-inner resize-none" placeholder="Details..."></textarea>
-                    
+
                     <!-- SECURE VAULT TOGGLE -->
                     <div class="flex items-center justify-between p-4 bg-bgPrime/60 rounded-2xl border border-[var(--color-border)] mt-4">
                         <div class="flex items-center gap-3">
@@ -547,13 +672,13 @@
                         </div>
                         <label class="toggle-switch relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="ev-is-secure" class="sr-only">
-                            <div class="w-11 h-6 bg-[var(--color-border)] rounded-full transition-colors duration-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-transform"></div>
+                            <span class="w-11 h-6 bg-[var(--color-border)] rounded-full transition-colors duration-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-transform"></span>
                         </label>
                     </div>
                 </div>
                 <div class="pt-6 flex gap-3">
-                    <button id="btn-delete-ev" onclick="deleteEvent()" class="hidden py-4 px-5 rounded-2xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"><i class="fa-solid fa-trash"></i></button>
-                    <button onclick="saveEvent()" class="flex-1 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Save Event</button>
+                    <button type="button" id="btn-delete-ev" aria-label="Hapus event" onclick="deleteEvent()" class="hidden py-4 px-5 rounded-2xl font-bold text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" onclick="saveEvent()" class="flex-1 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Save Event</button>
                 </div>
             </div>
         </div>
@@ -568,8 +693,8 @@
             <p class="text-xs font-semibold text-textMuted mb-6 relative z-10">Enter 4-digit PIN for AES-GCM encryption</p>
             <input type="password" id="vault-pin" maxlength="4" inputmode="numeric" class="w-full bg-bgPrime border border-[var(--color-border)] text-center tracking-[0.8em] font-mono text-3xl rounded-2xl py-4 text-textMain focus:border-brand focus:ring-2 focus:ring-brand/30 outline-none transition-all mb-8 shadow-inner relative z-10">
             <div class="flex gap-3 relative z-10">
-                <button onclick="cancelPinPrompt()" class="flex-1 py-3.5 rounded-2xl font-bold text-textMain bg-bgPrime border border-[var(--color-border)] hover:bg-[var(--color-border)] transition-all">Cancel</button>
-                <button onclick="submitPinPrompt()" class="flex-1 py-3.5 rounded-2xl font-bold text-white bg-brand shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Unlock</button>
+                <button type="button" onclick="cancelPinPrompt()" class="flex-1 py-3.5 rounded-2xl font-bold text-textMain bg-bgPrime border border-[var(--color-border)] hover:bg-[var(--color-border)] transition-all">Cancel</button>
+                <button type="button" onclick="submitPinPrompt()" class="flex-1 py-3.5 rounded-2xl font-bold text-white bg-brand shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all">Unlock</button>
             </div>
         </div>
     </div>
@@ -579,7 +704,7 @@
         <div class="modal-content bg-card w-full sm:w-[28rem] p-8 rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl transform transition-all translate-y-full sm:scale-95 duration-300 opacity-0 border border-[var(--color-border)]">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-2xl font-black text-textMain tracking-tight">Generate Report</h3>
-                <button onclick="closeModal('modal-pdf')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" aria-label="Tutup" onclick="closeModal('modal-pdf')" class="w-8 h-8 rounded-full bg-bgPrime border border-[var(--color-border)] flex items-center justify-center text-textMuted hover:text-textMain hover:bg-brand hover:border-brand hover:text-white transition-all"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-5">
                 <div>
@@ -593,7 +718,7 @@
                         <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-textMuted pointer-events-none"></i>
                     </div>
                 </div>
-                
+
                 <div id="pdf-history-inputs" class="flex gap-4">
                     <div class="flex-1">
                         <label class="block text-xs font-bold text-textMuted uppercase mb-2 tracking-wide">Start Date</label>
@@ -604,14 +729,14 @@
                         <input id="pdf-end-date" type="date" class="w-full bg-bgPrime border border-[var(--color-border)] rounded-2xl p-4 text-textMain text-sm font-medium focus:border-brand outline-none transition-all shadow-inner">
                     </div>
                 </div>
-                
+
                 <div id="pdf-calendar-inputs" class="hidden">
                     <label class="block text-xs font-bold text-textMuted uppercase mb-2 tracking-wide">Select Month</label>
                     <input id="pdf-month" type="month" class="w-full bg-bgPrime border border-[var(--color-border)] rounded-2xl p-4 text-textMain text-sm font-medium focus:border-brand outline-none transition-all shadow-inner">
                 </div>
 
                 <div class="pt-6">
-                    <button onclick="generatePDF()" class="w-full py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all flex justify-center items-center text-base"><i class="fa-solid fa-print mr-3 text-lg"></i>Create PDF</button>
+                    <button type="button" onclick="generatePDF()" class="w-full py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-brand to-purple-500 shadow-[0_8px_24px_var(--color-brand-glow)] hover:opacity-90 transition-all flex justify-center items-center text-base"><i class="fa-solid fa-print mr-3 text-lg"></i>Create PDF</button>
                 </div>
             </div>
         </div>
@@ -626,14 +751,14 @@
         let db;
         let currentEditingTask = null;
         let compressedImageBase64 = null;
-        
+
         let currentMonth = new Date();
         let selectedDate = new Date().toISOString().split('T')[0];
 
         // 03:00 AM Rollover
         function getLogicalDate() {
             const now = new Date();
-            now.setHours(now.getHours() - 3); 
+            now.setHours(now.getHours() - 3);
             return now.toISOString().split('T')[0];
         }
 
@@ -680,11 +805,11 @@
             if(!peer) return showIsland("Initialize your ID first", "fa-power-off", true);
             const targetId = document.getElementById('target-peer-id').value.trim();
             if(!targetId) return showIsland("Enter target ID", "fa-keyboard", true);
-            
+
             const syncStatus = document.getElementById('sync-status');
             syncStatus.innerText = "Connecting...";
             syncStatus.classList.remove('hidden');
-            
+
             conn = peer.connect(targetId);
             setupConnection();
         }
@@ -694,13 +819,13 @@
             conn.on('open', () => {
                 showIsland("Connected!", "fa-link");
                 syncStatus.innerText = "Connected. Exporting data...";
-                
+
                 exportDatabase().then(data => {
                     conn.send({ type: 'sync_data', payload: data });
                     syncStatus.innerText = "Data sent to peer.";
                 });
             });
-            
+
             conn.on('data', async (data) => {
                 if(data.type === 'sync_data') {
                     syncStatus.innerText = "Receiving data...";
@@ -790,7 +915,7 @@
         // --- Database Setup ---
         function initDB() {
             const request = indexedDB.open(DB_NAME, DB_VERSION);
-            
+
             request.onupgradeneeded = (e) => {
                 db = e.target.result;
                 if (!db.objectStoreNames.contains('routines')) db.createObjectStore('routines', { keyPath: 'id' });
@@ -881,28 +1006,58 @@
             }
         }
 
+        // Pindah tampilan. Perbaikan v1.1.0: versi lama memakai event.currentTarget
+        // dan mengasumsikan tombol pemanggil selalu punya ikon <i> — tombol
+        // "View All" tidak punya ikon, jadi tiap diklik melempar TypeError
+        // (dan renderCalendar/renderAgenda di bawahnya tidak pernah jalan).
+        // Sekarang status aktif diambil dari tombol nav berdasarkan viewId,
+        // dengan guard null di semua akses ikon.
         function switchView(viewId) {
             document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(`view-${viewId}`).classList.remove('hidden');
-            
+            const target = document.getElementById(`view-${viewId}`);
+            if (!target) return;
+            target.classList.remove('hidden');
+
+            const isLanding = viewId === 'landing';
+            const appHeader = document.getElementById('appHeader');
+            const bottomNav = document.getElementById('bottomNav');
+            if (appHeader) appHeader.classList.toggle('hidden', isLanding);
+            if (bottomNav) bottomNav.classList.toggle('hidden', isLanding);
+
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-brand', 'active', 'scale-110');
                 btn.classList.add('text-textMuted');
                 // update icon style
-                btn.querySelector('i').classList.remove('drop-shadow-md', 'text-brand');
+                const ic = btn.querySelector('i');
+                if (ic) ic.classList.remove('drop-shadow-md', 'text-brand');
             });
-            event.currentTarget.classList.remove('text-textMuted');
-            event.currentTarget.classList.add('text-brand', 'active', 'scale-110');
-            event.currentTarget.querySelector('i').classList.add('drop-shadow-md', 'text-brand');
+            const navBtn = document.querySelector(`.nav-btn[onclick*="switchView('${viewId}')"]`);
+            if (navBtn) {
+                navBtn.classList.remove('text-textMuted');
+                navBtn.classList.add('text-brand', 'active', 'scale-110');
+                const navIcon = navBtn.querySelector('i');
+                if (navIcon) navIcon.classList.add('drop-shadow-md', 'text-brand');
+            }
 
             if(viewId === 'logbook') renderLogbook();
             if(viewId === 'calendar') { renderCalendar(); renderAgenda(); }
         }
 
+        // Masuk ke aplikasi dari landing (dicatat agar kunjungan berikut langsung masuk aplikasi).
+        function enterApp() {
+            localStorage.setItem('najwaEntered', '1');
+            switchView('hud');
+        }
+
+        // Kembali ke halaman depan (dari Pengaturan).
+        function showLanding() {
+            switchView('landing');
+        }
+
         function setTheme(themeClass) {
-            document.documentElement.className = themeClass; 
+            document.documentElement.className = themeClass;
             localStorage.setItem('najwaTheme', themeClass);
-            
+
             const meta = document.getElementById('theme-color-meta');
             if(themeClass === 'theme-pink') meta.content = '#fdf2f8';
             else if(themeClass === 'theme-dark') meta.content = '#0B0F19';
@@ -914,11 +1069,11 @@
             renderLogbook();
             renderCalendar();
             renderAgenda();
-            
+
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('headerDate').innerText = new Date().toLocaleDateString('en-US', options);
             document.getElementById('logbook-date').value = getLogicalDate();
-            
+
             const nowStr = new Date().toISOString().split('T')[0];
             document.getElementById('pdf-start-date').value = nowStr;
             document.getElementById('pdf-end-date').value = nowStr;
@@ -929,7 +1084,7 @@
         function loadHUD() {
             const invContainer = document.getElementById('inventoryContainer');
             invContainer.innerHTML = '';
-            
+
             getAllStoreData('inventory').then(items => {
                 if(items.length === 0) {
                     invContainer.innerHTML = `<p class="text-sm text-textMuted italic p-2">No inventory added.</p>`;
@@ -942,12 +1097,12 @@
                         <div>
                             <div class="flex justify-between items-start mb-4">
                                 <div class="w-12 h-12 rounded-2xl bg-brand/10 text-brand flex items-center justify-center text-xl shadow-inner"><i class="fa-solid ${item.icon || 'fa-box'}"></i></div>
-                                <button onclick="openInventoryModal('${item.id}')" class="text-textMuted hover:text-brand transition z-10 p-2 bg-bgPrime rounded-full"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button type="button" aria-label="Ubah item" onclick="openInventoryModal('${item.id}')" class="text-textMuted hover:text-brand transition z-10 p-2 bg-bgPrime rounded-full"><i class="fa-solid fa-pen text-xs"></i></button>
                             </div>
                             <h3 class="text-base font-bold text-textMain leading-tight mb-1 truncate pr-2">${item.name}</h3>
                             <p class="text-xs text-textMuted font-bold mb-5 tracking-wide">STOCK: <span class="text-brand text-sm">${item.qty}</span></p>
                         </div>
-                        <button onclick="consumeItemById('${item.id}')" class="w-full py-2.5 bg-bgPrime hover:bg-brand hover:text-white border border-[var(--color-border)] hover:border-transparent rounded-xl text-xs font-bold text-textMain transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <button type="button" onclick="consumeItemById('${item.id}')" class="w-full py-2.5 bg-bgPrime hover:bg-brand hover:text-white border border-[var(--color-border)] hover:border-transparent rounded-xl text-xs font-bold text-textMain transition-all flex items-center justify-center gap-2 shadow-sm">
                             <i class="fa-solid fa-minus text-[10px]"></i> Consume
                         </button>
                     `;
@@ -957,7 +1112,7 @@
 
             const rtContainer = document.getElementById('routineContainer');
             rtContainer.innerHTML = '';
-            
+
             Promise.all([getAllStoreData('logs'), getAllStoreData('routines')]).then(([logs, routines]) => {
                 if(routines.length === 0) {
                     rtContainer.innerHTML = `<p class="text-sm text-textMuted italic p-2">No routines added.</p>`;
@@ -970,14 +1125,14 @@
                     const card = document.createElement('div');
                     card.className = `flex items-center p-5 rounded-3xl border backdrop-blur-md ${isDone ? 'bg-brand/5 border-brand/20' : 'bg-card/80 border-[var(--color-border)]'} shadow-sm transition-all hover:shadow-md group`;
                     card.innerHTML = `
-                        <button onclick="${isDone ? '' : `triggerPoW('${rt.name}')`}" class="w-10 h-10 rounded-full border-2 flex items-center justify-center mr-4 transition-all shadow-sm shrink-0 ${isDone ? 'bg-gradient-to-br from-brand to-purple-500 border-transparent text-white shadow-[0_4px_16px_var(--color-brand-glow)]' : 'border-[var(--color-border)] text-transparent bg-bgPrime hover:border-brand'}">
+                        <button type="button" aria-label="Tandai rutinitas selesai" onclick="${isDone ? '' : `triggerPoW('${rt.name}')`}" class="w-10 h-10 rounded-full border-2 flex items-center justify-center mr-4 transition-all shadow-sm shrink-0 ${isDone ? 'bg-gradient-to-br from-brand to-purple-500 border-transparent text-white shadow-[0_4px_16px_var(--color-brand-glow)]' : 'border-[var(--color-border)] text-transparent bg-bgPrime hover:border-brand'}">
                             <i class="fa-solid fa-check text-sm"></i>
                         </button>
                         <div class="flex-1 overflow-hidden">
                             <h3 class="text-base font-bold truncate pr-2 ${isDone ? 'text-brand line-through opacity-70' : 'text-textMain'}">${rt.name}</h3>
                             <p class="text-xs text-textMuted font-bold mt-1 flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> ${rt.time}</p>
                         </div>
-                        <button onclick="openRoutineModal('${rt.id}')" class="w-8 h-8 rounded-full bg-bgPrime text-textMuted hover:text-brand hover:bg-brand/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 border border-[var(--color-border)]"><i class="fa-solid fa-pen text-xs"></i></button>
+                        <button type="button" aria-label="Ubah rutinitas" onclick="openRoutineModal('${rt.id}')" class="w-8 h-8 rounded-full bg-bgPrime text-textMuted hover:text-brand hover:bg-brand/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 border border-[var(--color-border)]"><i class="fa-solid fa-pen text-xs"></i></button>
                     `;
                     rtContainer.appendChild(card);
                 });
@@ -990,10 +1145,10 @@
                 agendaContainer.innerHTML = '';
                 const todayStr = new Date().toISOString().split('T')[0];
                 agendaDateLabel.innerText = new Date().toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric'});
-                
+
                 getAllStoreData('events').then(events => {
                     const todayEvents = events.filter(e => e.date === todayStr).sort((a,b) => (a.time || '').localeCompare(b.time || ''));
-                    
+
                     if(todayEvents.length === 0) {
                         agendaContainer.innerHTML = `<div class="py-6 text-center text-textMuted/70">
                             <i class="fa-solid fa-mug-hot text-3xl mb-3 opacity-50"></i>
@@ -1001,7 +1156,7 @@
                         </div>`;
                         return;
                     }
-                    
+
                     todayEvents.forEach(evt => {
                         agendaContainer.innerHTML += `
                             <div class="flex items-center p-4 rounded-2xl bg-bgPrime border border-[var(--color-border)] shadow-sm hover:border-purple-500/30 transition-colors group">
@@ -1059,10 +1214,10 @@
             const qty = parseInt(document.getElementById('inv-qty').value) || 0;
             const icon = document.getElementById('inv-icon').value.trim();
             if(!name) return showIsland("Item Name required", "fa-triangle-exclamation", true);
-            putStoreData('inventory', {id, name, qty, icon}).then(() => { 
-                closeModal('modal-inventory'); 
-                loadHUD(); 
-                showIsland("Item Saved", "fa-box"); 
+            putStoreData('inventory', {id, name, qty, icon}).then(() => {
+                closeModal('modal-inventory');
+                loadHUD();
+                showIsland("Item Saved", "fa-box");
             });
         }
         function deleteInventory() {
@@ -1093,10 +1248,10 @@
             const name = document.getElementById('rt-name').value.trim();
             const time = document.getElementById('rt-time').value;
             if(!name || !time) return showIsland("Name and Time required", "fa-triangle-exclamation", true);
-            putStoreData('routines', {id, name, time}).then(() => { 
-                closeModal('modal-routine'); 
-                loadHUD(); 
-                showIsland("Routine Saved", "fa-list-check"); 
+            putStoreData('routines', {id, name, time}).then(() => {
+                closeModal('modal-routine');
+                loadHUD();
+                showIsland("Routine Saved", "fa-list-check");
             });
         }
         function deleteRoutine() {
@@ -1149,7 +1304,7 @@
             if(requirePhoto && !compressedImageBase64) return showIsland("Please upload a photo!", "fa-camera", true);
             let note = document.getElementById('powNoteInput').value.trim();
             const isSecure = document.getElementById('pow-is-secure').checked;
-            
+
             if (isSecure && note) {
                 try {
                     const pin = await requestPIN();
@@ -1168,11 +1323,11 @@
                 isSecure: isSecure,
                 image: compressedImageBase64 || null
             };
-            putStoreData('logs', logData).then(() => { 
-                closeModal('powModal'); 
+            putStoreData('logs', logData).then(() => {
+                closeModal('powModal');
                 showIsland("Routine Logged!", "fa-fire");
                 loadHUD();
-                
+
                 // Check 100% completion for confetti
                 Promise.all([getAllStoreData('logs'), getAllStoreData('routines')]).then(([logs, routines]) => {
                     const todayLogs = logs.filter(l => l.date === getLogicalDate());
@@ -1205,15 +1360,15 @@
                     d.setDate(today.getDate() - i);
                     const dStr = d.toISOString().split('T')[0];
                     const count = logs.filter(l => l.date === dStr).length;
-                    let opacityClass = count === 0 ? 'heat-0' : 
-                                  count < 3 ? 'bg-brand/30 border border-white/5' : 
+                    let opacityClass = count === 0 ? 'heat-0' :
+                                  count < 3 ? 'bg-brand/30 border border-white/5' :
                                   count < 5 ? 'bg-brand/60 border border-white/5' : 'bg-gradient-to-br from-brand to-purple-500 shadow-[0_0_12px_var(--color-brand-glow)] border border-transparent';
                     hGrid.innerHTML += `<div class="w-5 h-5 sm:w-6 sm:h-6 rounded-md ${opacityClass} transition-all hover:scale-125 cursor-pointer" title="${dStr}: ${count} logs"></div>`;
                 }
 
                 let filtered = logs.reverse();
                 if (dateFilter) filtered = filtered.filter(l => l.date === dateFilter);
-                
+
                 if(filtered.length === 0) {
                     container.innerHTML = `<div class="p-10 text-center text-textMuted bg-card/60 rounded-3xl border border-[var(--color-border)] shadow-sm backdrop-blur-md">
                         <i class="fa-solid fa-ghost text-5xl mb-4 opacity-20"></i>
@@ -1255,40 +1410,40 @@
         function renderCalendar() {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth();
-            
+
             document.getElementById('calendar-month-label').innerText = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-            
+
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
+
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
-            
+
             getAllStoreData('events').then(events => {
                 for(let i=0; i<firstDay; i++) { grid.innerHTML += `<div></div>`; }
-                
+
                 for(let d=1; d<=daysInMonth; d++) {
                     const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                     const dayEvents = events.filter(e => e.date === dateStr);
-                    
+
                     const hasEvent = dayEvents.length > 0;
                     const isToday = new Date().toISOString().split('T')[0] === dateStr;
                     const isSelected = selectedDate === dateStr;
-                    
+
                     let dotHtml = '';
                     if(hasEvent) {
                         dotHtml = `<div class="absolute bottom-1.5 flex gap-1 justify-center w-full">`;
                         dayEvents.slice(0,3).forEach(() => { dotHtml += `<span class="w-1.5 h-1.5 bg-brand rounded-full shadow-[0_0_4px_var(--color-brand)]"></span>`; });
                         dotHtml += `</div>`;
                     }
-                    
+
                     let cellClass = `cal-day relative h-12 sm:h-14 flex items-center justify-center rounded-2xl cursor-pointer text-sm font-bold transition-all border border-transparent `;
                     if(isSelected) cellClass += `ring-2 ring-brand ring-offset-2 ring-offset-[var(--color-card)] `;
-                    
+
                     if(isToday && !isSelected) cellClass += `bg-brand/10 text-brand `;
                     else if(isSelected) cellClass += `bg-gradient-to-br from-brand to-purple-600 text-white shadow-[0_4px_16px_var(--color-brand-glow)] `;
                     else cellClass += `text-textMain hover:bg-bgPrime hover:border-[var(--color-border)] `;
-                    
+
                     grid.innerHTML += `<div class="${cellClass}" data-date="${dateStr}" onclick="selectDate('${dateStr}')">${d}${dotHtml}</div>`;
                 }
             });
@@ -1305,7 +1460,7 @@
             document.getElementById('agenda-date-label').innerText = dObj.toLocaleDateString('en-US', {weekday: 'long', month:'short', day:'numeric'});
             const container = document.getElementById('agenda-list');
             container.innerHTML = '';
-            
+
             getAllStoreData('events').then(events => {
                 const dayEvents = events.filter(e => e.date === selectedDate).sort((a,b) => (a.time || '').localeCompare(b.time || ''));
                 if(dayEvents.length === 0) {
@@ -1327,7 +1482,7 @@
                                 </div>
                                 ${evt.description ? `<p class="text-sm text-textMuted mt-3 font-medium leading-relaxed bg-bgPrime/80 p-3 rounded-2xl border border-[var(--color-border)] shadow-inner">${evt.isSecure ? '<i class="fa-solid fa-lock text-brand mr-2"></i> [Encrypted Vault Note]' : evt.description}</p>` : ''}
                             </div>
-                            <button onclick="openEventModal('${evt.id}')" class="text-textMuted hover:text-white hover:bg-brand w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all border border-[var(--color-border)] bg-bgPrime"><i class="fa-solid fa-pen text-sm"></i></button>
+                            <button type="button" aria-label="Ubah event" onclick="openEventModal('${evt.id}')" class="text-textMuted hover:text-white hover:bg-brand w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all border border-[var(--color-border)] bg-bgPrime"><i class="fa-solid fa-pen text-sm"></i></button>
                         </div>
                     `;
                 });
@@ -1344,7 +1499,7 @@
                     document.getElementById('ev-title').value = evt.title;
                     document.getElementById('ev-time').value = evt.time || '';
                     document.getElementById('ev-location').value = evt.location || '';
-                    
+
                     if(evt.isSecure && evt.description) {
                         try {
                             const pin = await requestPIN();
@@ -1364,7 +1519,7 @@
                     } else {
                         document.getElementById('ev-desc').value = evt.description || '';
                     }
-                    
+
                     document.getElementById('btn-delete-ev').classList.remove('hidden');
                     openModal('modal-event');
                 });
@@ -1387,9 +1542,9 @@
             const location = document.getElementById('ev-location').value.trim();
             let description = document.getElementById('ev-desc').value.trim();
             const isSecure = document.getElementById('ev-is-secure').checked;
-            
+
             if(!title || !date) return showIsland("Title and Date required", "fa-triangle-exclamation", true);
-            
+
             if(isSecure && description) {
                 try {
                     const pin = await requestPIN();
@@ -1399,12 +1554,13 @@
                     return; // Cancelled
                 }
             }
-            
+
             putStoreData('events', {id, date, title, time, location, description, isSecure}).then(() => {
                 closeModal('modal-event');
                 showIsland("Event Saved", "fa-calendar-check");
                 renderCalendar();
                 if(date === selectedDate) renderAgenda();
+                loadHUD(); // v1.1.0: kartu "Today's Agenda" di Home ikut segar; sebelumnya event baru tak terlihat sampai reload
             });
         }
         function deleteEvent() {
@@ -1413,6 +1569,7 @@
                     closeModal('modal-event');
                     renderCalendar();
                     renderAgenda();
+                    loadHUD();
                 });
             }
         }
@@ -1442,14 +1599,14 @@
             printDiv.style.fontFamily = 'sans-serif';
             printDiv.style.zIndex = '-9999';
             printDiv.style.pointerEvents = 'none';
-            
+
             let promise;
-            
+
             if(type === 'history') {
                 const start = document.getElementById('pdf-start-date').value;
                 const end = document.getElementById('pdf-end-date').value;
                 if(!start || !end) return showIsland("Please select date range", "fa-xmark", true);
-                
+
                 promise = getAllStoreData('logs').then(logs => {
                     const filtered = logs.filter(l => l.date >= start && l.date <= end).sort((a,b) => a.date.localeCompare(b.date));
                     printDiv.innerHTML = `<h1 style="font-size: 28px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">Najwa Logbook Report</h1>
@@ -1466,9 +1623,9 @@
                     });
                 });
             } else if (type === 'calendar') {
-                const month = document.getElementById('pdf-month').value; 
+                const month = document.getElementById('pdf-month').value;
                 if(!month) return showIsland("Please select a month", "fa-xmark", true);
-                
+
                 promise = getAllStoreData('events').then(events => {
                     const filtered = events.filter(e => e.date.startsWith(month)).sort((a,b) => a.date.localeCompare(b.date));
                     printDiv.innerHTML = `<h1 style="font-size: 28px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">Najwa Agenda Report</h1>
@@ -1498,10 +1655,10 @@
                     });
                 });
             }
-            
+
             promise.then(() => {
                 document.body.appendChild(printDiv);
-                
+
                 // Allow browser to calculate styles before canvas capture
                 setTimeout(() => {
                     const opt = {
@@ -1547,6 +1704,12 @@
             const savedTheme = localStorage.getItem('najwaTheme') || 'theme-dark';
             setTheme(savedTheme);
             initDB();
+            // Pengguna baru melihat landing dulu; yang sudah pernah masuk langsung ke aplikasi.
+            if (localStorage.getItem('najwaEntered') === '1') {
+                switchView('hud');
+            } else {
+                switchView('landing');
+            }
         };
     </script>
 </body>
