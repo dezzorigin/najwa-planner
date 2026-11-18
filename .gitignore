@@ -15,3 +15,6 @@ Thumbs.db
 # Log & file sementara
 *.log
 *.tmp
+
+# LHCI local output
+.lighthouseci/
