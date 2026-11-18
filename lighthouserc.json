@@ -8,10 +8,7 @@
       "startServerCommand": "python3 -m http.server 8080",
       "startServerReadyPattern": "Serving HTTP",
       "settings": {
-        "chromeFlags": [
-          "--no-sandbox",
-          "--disable-dev-shm-usage"
-        ]
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage"
       }
     },
     "assert": {
