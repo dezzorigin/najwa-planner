@@ -1,12 +1,19 @@
-const CACHE_NAME = 'najwa-planner-cache-v1';
+const CACHE_NAME = 'najwa-planner-cache-v2';
 
-// File inti yang wajib disimpan di memori HP lu
+// File inti yang wajib disimpan di memori HP lu.
+// v1.1.0: URL flaticon yang tidak pernah dipakai aplikasi dihapus dari daftar —
+// cache.addAll() gagal total bila SATU saja URL di daftar ini gagal di-fetch,
+// jadi entri mati itu bisa menggagalkan seluruh instalasi service worker.
+// Tailwind di-vendor lokal (./tailwind.js): fetch() ke cdn.tailwindcss.com
+// gagal di sebagian jaringan/proxy, sehingga SW tidak bisa meng-install.
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
-  'https://cdn.tailwindcss.com',
+  './icon-192.png',
+  './icon-512.png',
+  './logo.svg',
+  './tailwind.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate HTML
+        run: |
+          npm install -g html-validate@8
+          html-validate index.html
+
+      - name: Check links in docs
+        run: |
+          npm install -g markdown-link-check@3
+          markdown-link-check --config .markdown-link-check.json README.md
+          markdown-link-check --config .markdown-link-check.json docs/architecture.md
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Konfigurasi ini sengaja BERBEDA dari repo PWA saudara (bdzhr-planner):
+      # 3 kali run (bukan 2), ambang performance warn 0.5 (bukan 0.6), dan
+      # audit errors-in-console ditegakkan sebagai error.
+      # Catatan: Lighthouse 12 MENGHAPUS kategori & audit PWA, jadi skor PWA
+      # tidak bisa ditegakkan lewat LHCI — instalasi PWA (manifest + ikon PNG
+      # + service worker terdaftar + mode offline) diverifikasi lewat play-test
+      # headless, bukan lewat CI.
+      - name: Lighthouse audit
+        run: npx --yes @lhci/cli@0.14.0 autorun --config=lighthouserc.json

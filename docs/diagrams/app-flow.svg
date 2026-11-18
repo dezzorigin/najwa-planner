@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="600" viewBox="0 0 880 600" role="img" aria-labelledby="t d">
+<title id="t">Alur aplikasi Najwa Planner</title>
+<desc id="d">Pengguna membuka PWA: landing dulu, lalu empat tampilan aplikasi (Home, Logbook, Kalender, Pengaturan). Data tersimpan lokal di IndexedDB; service worker men-cache semuanya untuk mode offline; sinkronisasi antar perangkat memakai PeerJS; catatan sensitif dienkripsi AES-GCM dengan PIN.</desc>
+<style>
+  .bg { fill: #f8fafc; }
+  .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 1.5; }
+  .card-ink { fill: #0f172a; }
+  .card-mut { fill: #64748b; }
+  .accent { fill: #db2777; }
+  .accent-soft { fill: #fdf2f8; stroke: #f9a8d4; stroke-width: 1.5; }
+  .ink { fill: #0f172a; font-family: Inter, system-ui, sans-serif; }
+  .mut { fill: #64748b; font-family: Inter, system-ui, sans-serif; }
+  .small { font-size: 12px; }
+  .mid { font-size: 13px; font-weight: 600; }
+  .big { font-size: 15px; font-weight: 800; }
+  .arrow { stroke: #db2777; stroke-width: 2; fill: none; marker-end: url(#ah); }
+  .arrow-ghost { stroke: #94a3b8; stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; marker-end: url(#ag); }
+</style>
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#db2777"/></marker>
+  <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#94a3b8"/></marker>
+</defs>
+
+<rect class="bg" width="880" height="600" rx="8"/>
+
+<text x="40" y="44" class="ink" font-size="20" font-weight="800">Najwa Planner — alur aplikasi</text>
+<text x="40" y="66" class="mut small">Satu halaman, tanpa server. Data tinggal di perangkat; online hanya untuk kunjungan pertama dan sync P2P.</text>
+
+<!-- Step 1: open -->
+<g>
+  <rect class="accent-soft" x="40" y="92" width="180" height="86" rx="16"/>
+  <text x="60" y="124" class="ink big">1 · Buka</text>
+  <text x="60" y="146" class="mut small">Landing (baru) atau</text>
+  <text x="60" y="163" class="mut small">langsung aplikasi</text>
+</g>
+
+<!-- Step 2: landing -->
+<g>
+  <rect class="card" x="260" y="92" width="180" height="86" rx="16"/>
+  <text x="280" y="124" class="ink big">2 · Landing</text>
+  <text x="280" y="146" class="mut small">Hero + fitur + cara kerja</text>
+  <text x="280" y="163" class="mut small">CTA “Buka Planner”</text>
+</g>
+
+<!-- Step 3: app -->
+<g>
+  <rect class="card" x="480" y="92" width="180" height="86" rx="16"/>
+  <text x="500" y="124" class="ink big">3 · Aplikasi</text>
+  <text x="500" y="146" class="mut small">Home · Logbook · Kalender</text>
+  <text x="500" y="163" class="mut small">Pengaturan · bottom nav</text>
+</g>
+
+<!-- Step 4: done -->
+<g>
+  <rect class="accent-soft" x="700" y="92" width="140" height="86" rx="16"/>
+  <text x="720" y="124" class="ink big">4 · Selesai</text>
+  <text x="720" y="146" class="mut small">PoW tercatat,</text>
+  <text x="720" y="163" class="mut small">confetti sekali sehari</text>
+</g>
+
+<path class="arrow" d="M220 135 H256"/>
+<path class="arrow" d="M440 135 H476"/>
+<path class="arrow" d="M660 135 H696"/>
+
+<!-- Home detail -->
+<g>
+  <rect class="card" x="40" y="220" width="250" height="120" rx="16"/>
+  <text x="60" y="250" class="ink big">Home</text>
+  <text x="60" y="272" class="mut small">Agenda hari ini (urut jam)</text>
+  <text x="60" y="289" class="mut small">Rutinitas + tombol PoW</text>
+  <text x="60" y="306" class="mut small">Inventory + Consume</text>
+  <text x="60" y="323" class="mut small">loadHUD() me-render ulang</text>
+</g>
+
+<!-- Logbook -->
+<g>
+  <rect class="card" x="315" y="220" width="250" height="120" rx="16"/>
+  <text x="335" y="250" class="ink big">Logbook</text>
+  <text x="335" y="272" class="mut small">Riwayat Proof of Work</text>
+  <text x="335" y="289" class="mut small">Filter per tanggal</text>
+  <text x="335" y="306" class="mut small">Heatmap 30 hari (klik buka)</text>
+</g>
+
+<!-- Calendar -->
+<g>
+  <rect class="card" x="590" y="220" width="250" height="120" rx="16"/>
+  <text x="610" y="250" class="ink big">Kalender</text>
+  <text x="610" y="272" class="mut small">Grid sebulan, pindah bulan</text>
+  <text x="610" y="289" class="mut small">Ketuk tanggal → agenda</text>
+  <text x="610" y="306" class="mut small">Tambah event di tanggal itu</text>
+</g>
+
+<path class="arrow-ghost" d="M165 178 V216"/>
+<path class="arrow-ghost" d="M440 178 V216"/>
+<path class="arrow-ghost" d="M715 178 V216"/>
+
+<!-- Storage -->
+<g>
+  <rect class="accent-soft" x="40" y="382" width="390" height="96" rx="16"/>
+  <text x="60" y="412" class="ink big">Penyimpanan lokal</text>
+  <text x="60" y="434" class="mut small">IndexedDB NajwaPlannerDB_v2 — routines · logs · inventory · events</text>
+  <text x="60" y="451" class="mut small">localStorage — najwaTheme · najwaEntered · confetti_&lt;tanggal&gt;</text>
+  <text x="60" y="468" class="mut small">Foto PoW: base64, dikompres &lt; 150 KB sebelum disimpan</text>
+</g>
+
+<!-- PWA -->
+<g>
+  <rect class="card" x="455" y="382" width="385" height="96" rx="16"/>
+  <text x="475" y="412" class="ink big">PWA offline</text>
+  <text x="475" y="434" class="mut small">sw.js terdaftar saat load — cache-first (halaman + ikon + CDN)</text>
+  <text x="475" y="451" class="mut small">Manifest: ikon PNG 192 (any) + 512 (any + maskable)</text>
+  <text x="475" y="468" class="mut small">Install di HP/desktop; jalan offline setelah kunjungan pertama</text>
+</g>
+
+<path class="arrow-ghost" d="M165 340 V378"/>
+<path class="arrow-ghost" d="M440 340 V378"/>
+<path class="arrow-ghost" d="M715 340 V378"/>
+
+<!-- Bottom row -->
+<g>
+  <rect class="card" x="40" y="510" width="390" height="64" rx="16"/>
+  <text x="60" y="536" class="ink mid">Vault PIN — AES-GCM (Web Crypto)</text>
+  <text x="60" y="555" class="mut small">Catatan &amp; event sensitif terenkripsi; PIN tidak pernah disimpan.</text>
+</g>
+
+<g>
+  <rect class="card" x="455" y="510" width="385" height="64" rx="16"/>
+  <text x="60" y="536" class="ink mid" x="475">Sync P2P + PDF</text>
+  <text x="475" y="555" class="mut small">PeerJS WebRTC antar perangkat · laporan PDF via html2pdf.js</text>
+</g>
+</svg>

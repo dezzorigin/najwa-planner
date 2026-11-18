@@ -1,18 +1,1 @@
-{
-  "name": "Najwa Planner",
-  "short_name": "Najwa Planner",
-  "description": "Offline-First Personal Life & Habit Tracker",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#fdf2f8",
-  "theme_color": "#db2777",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "./logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
-}
+{"background_color":"#0B0F19","description":"Offline-First Personal Life & Habit Tracker","display":"standalone","icons":[{"purpose":"any","sizes":"192x192","src":"./icon-192.png","type":"image/png"},{"purpose":"any","sizes":"512x512","src":"./icon-512.png","type":"image/png"},{"purpose":"maskable","sizes":"512x512","src":"./icon-512.png","type":"image/png"},{"purpose":"any","sizes":"any","src":"./logo.svg","type":"image/svg+xml"}],"id":"./index.html","name":"Najwa Planner","orientation":"portrait","short_name":"Najwa Planner","start_url":"./index.html","theme_color":"#db2777"}

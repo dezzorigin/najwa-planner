@@ -1,0 +1,17 @@
+# Dependensi & artefak lokal
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS & editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Log & file sementara
+*.log
+*.tmp
