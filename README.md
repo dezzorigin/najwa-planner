@@ -79,6 +79,7 @@ sw.js               # service worker (cache offline)
 logo.svg            # logo (huruf N)
 icon-192.png        # ikon PWA 192x192
 icon-512.png        # ikon PWA 512x512 (any + maskable)
+og-image.png        # gambar preview Open Graph/Twitter (screenshot asli landing, 1200x630)
 README.md
 PRD.md
 CHANGELOG.md
